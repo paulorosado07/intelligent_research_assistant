@@ -1,5 +1,5 @@
 # Intelligent Research Assistant  
-
+<img width="1233" height="788" alt="Image" src="https://github.com/user-attachments/assets/890ff7e7-8847-4869-adf9-3a32b3601d14" />
 
 This project is an intelligent and customizable chatbot designed to assist users in researching historical events, news, and factual information with high accuracy and verified sources. The main goal of the system is to deliver clear, reliable responses while automatically providing their corresponding references — saving time, improving trust, and reducing operational costs.
 
