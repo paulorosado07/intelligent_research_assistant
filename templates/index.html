@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatGPT Clone</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#74a8d6, #ffffff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url(/static/images/flower.png);
+      background-position: center;
+      background-size: cover;
+      background-position: no-repeat;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    h2 {
+      margin-top: 5px;
+      color: #fff;
+      font-weight: normal;
+    }
+
+    .chat-box {
+      margin: 30px auto;
+      padding: 10px;
+      border-radius: 20px;
+      background: #fff;
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-box input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    .chat-box button {
+      padding: 10px 15px;
+      background: #4a6cf1;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .messages {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 20px;
+      border-radius: 20px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .msg {
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #fff;
+      border-radius: 10px;
+      text-align: left;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      white-space: pre-line;
+    }
+    
+    .typing {
+      width: 60px;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+
+    .typing .dot {
+      width: 10px;
+      height: 10px;
+      background: #4a6cf1;
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+
+    .typing .dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing .dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 0.2;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.2;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Good morning, how are you?</h1>
+    <h2>What's on your mind?</h2>
+    <div class="messages" id="messages"></div>
+    <div class="chat-box">
+      <input id="userInput" type="text" placeholder="Message Copilot..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    function typeWriter(element, text, speed = 20) {
+      let i = 0;
+      function typing() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(typing, speed);
+        }
+      }
+      typing();
+    }
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const msgBox = document.getElementById("messages");
+      const text = input.value.trim();
+
+      if (text === "") return;
+      msgBox.style.display = "block";
+      const msg = document.createElement("div");
+      msg.className = "msg user";
+      msg.innerText = "Você: " + text;
+      msgBox.appendChild(msg);
+
+      msgBox.scrollTop = msgBox.scrollHeight;
+      input.value = "";
+      input.focus();
+
+      const typing = document.createElement("div");
+      typing.className = "msg bot";
+      typing.innerHTML = `
+      <div class="typing">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>`;
+      msgBox.appendChild(typing);
+      msgBox.scrollTop = msgBox.scrollHeight;
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
+        });
+
+        const data = await res.json();
+        msgBox.removeChild(typing);
+        const botMsg = document.createElement("div");
+        botMsg.className = "msg bot";
+
+        msgBox.appendChild(botMsg);
+
+        
+        typeWriter(botMsg, "Bot: " + data.response, 10);
+
+        msgBox.scrollTop = msgBox.scrollHeight;
+      } catch (err) {
+        msgBox.removeChild(typing);
+        const errorMsg = document.createElement("div");
+        errorMsg.className = "msg bot";
+        errorMsg.innerText = "Bot: Ocorreu um erro ao falar com o servidor.";
+        msgBox.appendChild(errorMsg);
+        msgBox.scrollTop = msgBox.scrollHeight;
+      }
+    }
+
+    document
+      .getElementById("userInput")
+      .addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+  </script>
+</body>
+
+</html>
