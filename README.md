@@ -39,6 +39,11 @@ Here are the technologies used in this project:
 - Langchain
 - OpenAI
 
+### DevOps & Deployment
+
+- GitHub Actions (CI/CD)
+- Render
+
 ## Skills Demonstrated
 
 - Full-Stack Development  
@@ -46,7 +51,8 @@ Here are the technologies used in this project:
 - AI System Integration  
 - Backend Architecture with Flask  
 - Responsive Front-End Design    
-- UX for Conversational Interfaces  
+- UX for Conversational Interfaces
+- CI/CD and deployment automation
 
 ## Getting Started
 
