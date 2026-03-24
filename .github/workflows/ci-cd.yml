@@ -20,10 +20,7 @@ jobs:
           pip install -r requirements.txt
       - run: pytest -q
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
+  
       - name: Trigger Render deploy for this commit
         run: |
           curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}" \
